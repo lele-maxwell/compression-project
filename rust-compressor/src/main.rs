@@ -57,3 +57,25 @@ fn main() {
     println!("Output file: {}", output_path.display());
     println!("Algorithm: {}", compressor_type);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rle_roundtrip() {
+        let input = b"AAABBBCCCCCDDDDE";
+        let compressed = compressors::rle(String::from_utf8_lossy(input).to_string());
+        let decompressed = decompressers::rle_decode(compressed);
+        assert_eq!(input.to_vec(), decompressed.into_bytes());
+    }
+
+    #[test]
+    fn test_lz_roundtrip() {
+        let input = b"ABABABABABAB";
+        let input_str = String::from_utf8_lossy(input).to_string();
+        let compressed = compressors::lz77_encode(&input_str);
+        let decompressed = decompressers::lz77_decode(&compressed);
+        assert_eq!(input.to_vec(), decompressed.into_bytes());
+    }
+}
