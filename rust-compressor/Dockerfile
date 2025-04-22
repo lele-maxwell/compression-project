@@ -1,17 +1,17 @@
 # Build stage
-FROM rust:latest as builder
+FROM rust:latest AS builder
 
 WORKDIR /app
 
-# Copy source files
+# Copy manifest and source
 COPY Cargo.toml .
-COPY . .
+COPY src ./src
 
 # Build the application
 RUN cargo build --release
 
 # Runtime stage
-FROM debian:bookworm-slim  # <-- use newer glibc
+FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
 
