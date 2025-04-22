@@ -1,0 +1,27 @@
+{
+  "name": "js-compressor",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of RLE and LZ77 compression algorithms",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/*.test.js",
+    "test:watch": "mocha test/*.test.js --watch",
+    "lint": "eslint .",
+    "benchmark": "node benchmark.js"
+  },
+  "keywords": [
+    "compression",
+    "rle",
+    "lz77"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.7",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
