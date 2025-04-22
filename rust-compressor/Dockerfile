@@ -6,9 +6,6 @@ WORKDIR /app
 # Copy manifest + lock file
 COPY Cargo.toml Cargo.lock ./
 
-# Avoid rebuilds if deps unchanged
-RUN cargo fetch
-
 # Copy full source
 COPY . .
 
