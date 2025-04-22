@@ -1,23 +1,23 @@
-# Use Node.js LTS version
-FROM node:20-alpine
+# Build stage
+FROM latest as builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install && npm install -g mocha
-
-# Copy source code
+# Copy source files
+COPY Cargo.toml .
 COPY . .
 
-# Run tests
-RUN npm test
+# Build the application
+RUN cargo build --release
+
+# Runtime stage
+FROM debian:bullseye-slim
+
+WORKDIR /app
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
 
 # Set the entrypoint to expose the CLI interface
-ENTRYPOINT ["node", "index.js"]
-
-# Default command (can be overridden)
-CMD ["--help"]
+ENTRYPOINT ["/app/rust-compressor"]
+CMD ["--help"] 
