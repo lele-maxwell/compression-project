@@ -1,28 +1,23 @@
-# Build stage
-FROM rust:1.75 as builder
+# Use Node.js LTS version
+FROM node:20-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Copy manifest and lock file first (for caching)
-COPY Cargo.toml Cargo.lock ./
+# Copy package files
+COPY package*.json ./
 
-# Create an empty src/main.rs just to make deps build not fail if src/ isn't copied yet
-RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo fetch
+# Install dependencies
+RUN npm install && npm install -g mocha
 
-# Now copy actual source
+# Copy source code
 COPY . .
 
-# Build the release binary
-RUN cargo build --release
+# Run tests
+RUN npm test
 
-# Runtime stage
-FROM debian:bullseye-slim
+# Set the entrypoint to expose the CLI interface
+ENTRYPOINT ["node", "index.js"]
 
-WORKDIR /app
-
-# Copy the built binary
-COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
-
-# Set the entrypoint
-ENTRYPOINT ["/app/rust-compressor"]
+# Default command (can be overridden)
 CMD ["--help"]
