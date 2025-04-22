@@ -121,6 +121,9 @@ The result of the bench is stored and saved in the results/benchmark.md file
 
  ```text
 ghcr.io/lele-maxwell/rust-compressor
-ghcr.io/lele-maxwell/js-compressor
+```
+```text
+
+ghcr.io/lele-maxwell/js-compresso
 ```
 
