@@ -1,6 +1,6 @@
 // LZ77 compression
 function compress(data) {
-    const WINDOW_SIZE = 32768; // Increased window size for better compression
+    const WINDOW_SIZE = 32768; 
     const MIN_MATCH_LENGTH = 3;
     const compressed = [];
     let cursor = 0;
@@ -13,7 +13,7 @@ function compress(data) {
         const start = Math.max(0, cursor - WINDOW_SIZE);
         const end = Math.min(cursor + WINDOW_SIZE, data.length);
 
-        // Look for matches in the sliding window
+        
         for (let lookBack = start; lookBack < cursor; lookBack++) {
             let length = 0;
             while (lookBack + length < cursor &&
@@ -30,7 +30,7 @@ function compress(data) {
         }
 
         if (matchFound) {
-            // Encode match: 0x01 + offset (2 bytes) + length (2 bytes)
+            
             compressed.push(0x01);
             compressed.push((matchOffset >> 8) & 0xFF);
             compressed.push(matchOffset & 0xFF);
@@ -38,7 +38,7 @@ function compress(data) {
             compressed.push(maxMatchLength & 0xFF);
             cursor += maxMatchLength;
         } else {
-            // Encode literal: 0x00 + byte
+            
             compressed.push(0x00);
             compressed.push(data[cursor]);
             cursor++;
@@ -57,7 +57,7 @@ function decompress(data) {
         const marker = data[i];
         switch (marker) {
             case 0x00:
-                // Literal: 0x00 + byte
+                
                 if (i + 1 < data.length) {
                     decompressed.push(data[i + 1]);
                     i += 2;
@@ -66,7 +66,7 @@ function decompress(data) {
                 }
                 break;
             case 0x01:
-                // Match: 0x01 + offset (2 bytes) + length (2 bytes)
+                
                 if (i + 4 < data.length) {
                     const offset = (data[i + 1] << 8) | data[i + 2];
                     const length = (data[i + 3] << 8) | data[i + 4];
