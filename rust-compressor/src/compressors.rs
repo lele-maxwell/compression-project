@@ -1,6 +1,6 @@
 #![allow(warnings)]
 
-// Remove unused import
+
 
 
 // RLE compression
@@ -22,7 +22,7 @@ pub fn compress(data: &[u8]) -> Vec<u8> {
     compressed
 }
 
-// LZ77 compression with improved performance
+// LZ77 compression 
 pub fn lz77_encode(data: &[u8]) -> Vec<u8> {
     let mut compressed = Vec::new();
     let mut i = 0;
@@ -30,7 +30,7 @@ pub fn lz77_encode(data: &[u8]) -> Vec<u8> {
     while i < data.len() {
         let mut best_match = (0u16, 0u8);
         
-        // Look for matches in the previous 32KB
+        
         let start = if i > 32768 { i - 32768 } else { 0 };
         for j in start..i {
             let mut match_len = 0u8;
@@ -47,14 +47,14 @@ pub fn lz77_encode(data: &[u8]) -> Vec<u8> {
         }
         
         if best_match.1 >= 3 {
-            // Encode match
+            
             compressed.push(0x01);
             compressed.push((best_match.0 >> 8) as u8);
             compressed.push(best_match.0 as u8);
             compressed.push(best_match.1);
             i += best_match.1 as usize;
         } else {
-            // Encode literal
+            
             compressed.push(0x00);
             compressed.push(data[i]);
             i += 1;
