@@ -4,17 +4,12 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
+RUN npm install
 
-# Install dependencies
-RUN npm install && npm install -g mocha
-
-# Copy source code
+# Copy the rest of the source code
 COPY . .
-
-# Run tests
-RUN npm test
 
 # Set the entrypoint to expose the CLI interface
 ENTRYPOINT ["node", "index.js"]
