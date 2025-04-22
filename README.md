@@ -1,3 +1,5 @@
+[![Build and Push Docker Images](https://github.com/lele-maxwell/compression-project/actions/workflows/docker.yml/badge.svg)](https://github.com/lele-maxwell/compression-project/actions/workflows/docker.yml)
+
 # Compression Tool 
 
 This is compression too for both compressing and decompressing files using **Run-Length Encoding (RLE)** and **LZ77** algorithms, available in both **Rust** and **JavaScript** . It is accompanied with bechmarking and automation via docker and CI/CD pipelines
