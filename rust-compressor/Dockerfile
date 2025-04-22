@@ -4,7 +4,7 @@ FROM rust:1.75 as builder
 WORKDIR /app
 
 # Copy source files
-COPY Cargo.toml .
+COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
 
 # Build the application
@@ -20,4 +20,4 @@ COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
 
 # Set the entrypoint to expose the CLI interface
 ENTRYPOINT ["/app/rust-compressor"]
-CMD ["--help"] 
+CMD ["--help"]
