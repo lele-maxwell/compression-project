@@ -1,5 +1,5 @@
 # Build stage
-FROM latest as builder
+FROM 1.75 as builder
 
 WORKDIR /app
 
