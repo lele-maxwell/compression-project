@@ -10,7 +10,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN cargo fetch
 
 # Copy full source
-COPY src/ src/
+COPY . .
 
 # Build the release binary
 RUN cargo build --release
