@@ -3,11 +3,16 @@ FROM rust:1.75 as builder
 
 WORKDIR /app
 
-# Copy source files
+# Copy manifest + lock file
 COPY Cargo.toml Cargo.lock ./
+
+# Avoid rebuilds if deps unchanged
+RUN cargo fetch
+
+# Copy full source
 COPY src/ src/
 
-# Build the application
+# Build the release binary
 RUN cargo build --release
 
 # Runtime stage
@@ -15,9 +20,9 @@ FROM debian:bullseye-slim
 
 WORKDIR /app
 
-# Copy the binary from the builder stage
+# Copy the compiled binary from builder
 COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
 
-# Set the entrypoint to expose the CLI interface
+# Set the binary as the entrypoint
 ENTRYPOINT ["/app/rust-compressor"]
 CMD ["--help"]
