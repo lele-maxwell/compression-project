@@ -11,7 +11,7 @@ COPY . .
 RUN cargo build --release
 
 # Runtime stage
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim  # <-- use newer glibc
 
 WORKDIR /app
 
@@ -20,4 +20,4 @@ COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
 
 # Set the entrypoint to expose the CLI interface
 ENTRYPOINT ["/app/rust-compressor"]
-CMD ["--help"] 
+CMD ["--help"]
