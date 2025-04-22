@@ -1,5 +1,5 @@
 # Use Node.js LTS version
-FROM node:18-slim
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -8,10 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install && npm install -g mocha
 
 # Copy source code
 COPY . .
+
+# Run tests
+RUN npm test
 
 # Set the entrypoint to expose the CLI interface
 ENTRYPOINT ["node", "index.js"]

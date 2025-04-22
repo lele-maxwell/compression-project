@@ -1,69 +1,65 @@
-pub fn rle(input: String) -> String {
-    let mut encoded = String::new();
-    let mut chars = input.chars();
-    let mut prev = match chars.next() {
-        Some(c) => c,
-        None => return encoded, 
-    };
+#![allow(warnings)]
 
-    let mut count = 1;
+// Remove unused import
 
-    for current in chars {
-        if current == prev {
+
+// RLE compression
+pub fn compress(data: &[u8]) -> Vec<u8> {
+    let mut compressed = Vec::new();
+    let mut i = 0;
+    
+    while i < data.len() {
+        let mut count = 1u8;
+        while (i + (count as usize)) < data.len() && data[i] == data[i + (count as usize)] && count < 255 {
             count += 1;
-        } else {
-            encoded.push(prev);
-            encoded.push_str(&count.to_string());
-
-            prev = current;
-            count = 1;
         }
+        
+        compressed.push(count);
+        compressed.push(data[i]);
+        i += count as usize;
     }
-
-    encoded.push(prev);
-    encoded.push_str(&count.to_string());
-
-    encoded
+    
+    compressed
 }
 
-pub fn lz77_encode(input: &str) -> String {
-    const WINDOW_SIZE: usize = 20; 
-    let chars: Vec<char> = input.chars().collect();
-    let mut result = String::new();
-    let mut cursor = 0;
-
-    while cursor < chars.len() {
-        let mut max_match_length = 0;
-        let mut match_offset = 0;
-        let mut match_found = false;
-
-        let start = if cursor >= WINDOW_SIZE { cursor - WINDOW_SIZE } else { 0 };
-
-        for look_back in start..cursor {
-            let mut length = 0;
-
-            while look_back + length < cursor &&
-                  cursor + length < chars.len() &&
-                  chars[look_back + length] == chars[cursor + length] {
-                length += 1;
+// LZ77 compression with improved performance
+pub fn lz77_encode(data: &[u8]) -> Vec<u8> {
+    let mut compressed = Vec::new();
+    let mut i = 0;
+    
+    while i < data.len() {
+        let mut best_match = (0u16, 0u8);
+        
+        // Look for matches in the previous 32KB
+        let start = if i > 32768 { i - 32768 } else { 0 };
+        for j in start..i {
+            let mut match_len = 0u8;
+            while (i + (match_len as usize)) < data.len() && 
+                  (j + (match_len as usize)) < i && 
+                  data[j + (match_len as usize)] == data[i + (match_len as usize)] && 
+                  match_len < 255 {
+                match_len += 1;
             }
-
-            if length > max_match_length {
-                max_match_length = length;
-                match_offset = cursor - look_back;
-                match_found = true;
+            
+            if match_len > best_match.1 {
+                best_match = ((i - j) as u16, match_len);
             }
         }
-
-        if match_found && cursor + max_match_length < chars.len() {
-            let next_char = chars[cursor + max_match_length];
-            result.push_str(&format!("({},{},{})", match_offset, max_match_length, next_char));
-            cursor += max_match_length + 1;
+        
+        if best_match.1 >= 3 {
+            // Encode match
+            compressed.push(0x01);
+            compressed.push((best_match.0 >> 8) as u8);
+            compressed.push(best_match.0 as u8);
+            compressed.push(best_match.1);
+            i += best_match.1 as usize;
         } else {
-            result.push_str(&format!("(0,0,{})", chars[cursor]));
-            cursor += 1;
+            // Encode literal
+            compressed.push(0x00);
+            compressed.push(data[i]);
+            i += 1;
         }
     }
-
-    result
+    
+    compressed
 }

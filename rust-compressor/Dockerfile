@@ -1,10 +1,23 @@
-FROM rust:1.70 as builder
+# Build stage
+FROM rust:1.75 as builder
 
 WORKDIR /app
-COPY . .
+
+# Copy source files
+COPY Cargo.toml .
+COPY src/ src/
+
+# Build the application
 RUN cargo build --release
 
+# Runtime stage
 FROM debian:bullseye-slim
-COPY --from=builder /app/target/release/rust-compressor /usr/local/bin/
 
-ENTRYPOINT ["rust-compressor"] 
+WORKDIR /app
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/target/release/rust-compressor /app/rust-compressor
+
+# Set the entrypoint to expose the CLI interface
+ENTRYPOINT ["/app/rust-compressor"]
+CMD ["--help"] 
